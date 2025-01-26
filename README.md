@@ -29,3 +29,7 @@ sqlite> CREATE TABLE transactions (
 sqlite> .mode csv
 sqlite> .import ./202304.csv transactions
 ```
+
+## I have uploaded the DB to my bucket
+
+https://s3.amazonaws.com/azr-es/prices.db

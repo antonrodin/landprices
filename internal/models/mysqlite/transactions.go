@@ -10,10 +10,28 @@ type TransactionModel struct {
 	DB *sql.DB
 }
 
-func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error) {
-	sql := `SELECT id, price, date, postcode, locality, town_city 
+// Get by ID method
+func (m *TransactionModel) Get(id string) (models.Transaction, error) {
+	sql := `SELECT id, price, date, old_or_new, postcode, locality, town_city, county, street, primary_address, secondary_address
 			FROM transactions
-			WHERE postcode = ?`
+			WHERE id = ?`
+
+	tr := models.Transaction{}
+
+	err := m.DB.QueryRow(sql, id).
+		Scan(&tr.Id, &tr.Price, &tr.Date, &tr.OldOrNew, &tr.Postcode, &tr.Locality, &tr.TownCity, &tr.County, &tr.Street, &tr.PrimaryAddress, &tr.SecondaryAddress)
+	if err != nil {
+		return tr, err
+	}
+
+	return tr, nil
+}
+
+func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error) {
+	sql := `SELECT id, price, date, old_or_new, postcode, locality, town_city, county, street, primary_address, secondary_address
+			FROM transactions
+			WHERE postcode = ?
+			LIMIT 200`
 
 	transactions := []models.Transaction{}
 
@@ -24,7 +42,7 @@ func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error)
 
 	for rows.Next() {
 		tr := models.Transaction{}
-		err := rows.Scan(&tr.Id, &tr.Price, &tr.Date, &tr.Postcode, &tr.Locality, &tr.TownCity)
+		err := rows.Scan(&tr.Id, &tr.Price, &tr.Date, &tr.OldOrNew, &tr.Postcode, &tr.Locality, &tr.TownCity, &tr.County, &tr.Street, &tr.PrimaryAddress, &tr.SecondaryAddress)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +60,7 @@ func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error)
 
 func (m *TransactionModel) All() ([]models.Transaction, error) {
 	sttm := `
-		SELECT id, price, date, locality, town_city
+		SELECT id, price, date, old_or_new, postcode, locality, town_city, county, street, primary_address, secondary_address
 		FROM transactions 
 		LIMIT 10
 		`
@@ -55,7 +73,7 @@ func (m *TransactionModel) All() ([]models.Transaction, error) {
 	transactions := []models.Transaction{}
 	for rows.Next() {
 		tr := models.Transaction{}
-		err := rows.Scan(&tr.Id, &tr.Price, &tr.Date, &tr.Postcode, &tr.Locality, &tr.TownCity)
+		err := rows.Scan(&tr.Id, &tr.Price, &tr.Date, &tr.OldOrNew, &tr.Postcode, &tr.Locality, &tr.TownCity, &tr.County, &tr.Street, &tr.PrimaryAddress, &tr.SecondaryAddress)
 		if err != nil {
 			return nil, err
 		}

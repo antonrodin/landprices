@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/antonrodin/landprices/internal/models"
 	"github.com/antonrodin/landprices/internal/models/mysqlite"
+	"github.com/go-chi/chi/v5"
 )
 
 var App *AppRepository
@@ -26,25 +28,30 @@ func (app *AppRepository) Home(w http.ResponseWriter, r *http.Request) {
 	app.writeJSON(w, 200, resp)
 }
 
-func (app *AppRepository) Test(w http.ResponseWriter, r *http.Request) {
+// Show By ID route
+func (app *AppRepository) Show(w http.ResponseWriter, r *http.Request) {
 	resp := jsonResponse{
 		Error:   false,
 		Message: "Test route",
 	}
 
-	all, err := app.Transaction.All()
+	// Get the ID from the URL
+	id := chi.URLParam(r, "id")
+
+	log.Println("ID", id)
+
+	tr, err := app.Transaction.Get(id)
 	if err != nil {
-		resp.Error = true
-		resp.Message = err.Error()
-		app.writeJSON(w, 500, resp)
+		app.errorJSON(w, err, http.StatusBadRequest)
 		return
 	}
 
-	resp.Data = all
+	resp.Data = tr
 
 	app.writeJSON(w, 200, resp)
 }
 
+// Search route
 func (app *AppRepository) Search(w http.ResponseWriter, r *http.Request) {
 	resp := jsonResponse{
 		Error:   false,

@@ -24,7 +24,7 @@ func (app *Config) routes() http.Handler {
 	mux.Use(middleware.Heartbeat("/ping"))
 
 	mux.Get("/", handlers.App.Home)
-	mux.Get("/test", handlers.App.Test)
+	mux.Get("/show/{id}", handlers.App.Show)
 	mux.Post("/search", handlers.App.Search)
 
 	return mux
