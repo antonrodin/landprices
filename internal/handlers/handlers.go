@@ -32,7 +32,7 @@ func (app *AppRepository) Home(w http.ResponseWriter, r *http.Request) {
 func (app *AppRepository) Show(w http.ResponseWriter, r *http.Request) {
 	resp := jsonResponse{
 		Error:   false,
-		Message: "Test route",
+		Message: "",
 	}
 
 	// Get the ID from the URL
@@ -46,6 +46,7 @@ func (app *AppRepository) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	resp.Message = "Transaction details"
 	resp.Data = tr
 
 	app.writeJSON(w, 200, resp)
@@ -55,7 +56,7 @@ func (app *AppRepository) Show(w http.ResponseWriter, r *http.Request) {
 func (app *AppRepository) Search(w http.ResponseWriter, r *http.Request) {
 	resp := jsonResponse{
 		Error:   false,
-		Message: "Test route",
+		Message: "",
 	}
 
 	var all []models.Transaction
@@ -77,6 +78,7 @@ func (app *AppRepository) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	resp.Message = "Search results"
 	resp.Data = all
 
 	app.writeJSON(w, 200, resp)

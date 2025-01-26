@@ -2,11 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/antonrodin/landprices/internal/handlers"
 	"github.com/antonrodin/landprices/internal/models/mysqlite"
+	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -24,7 +27,17 @@ func main() {
 
 func run() error {
 
-	db, err := sql.Open("sqlite3", "./database/prices.db")
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Config
+	port := os.Getenv("PORT")
+	dbFile := os.Getenv("DB_FILE")
+
+	db, err := sql.Open("sqlite3", dbFile)
 	if err != nil {
 		panic(err)
 	}
@@ -45,11 +58,11 @@ func run() error {
 	handlers.NewRepo(&appRepo)
 
 	server := &http.Server{
-		Addr:    ":3333",
+		Addr:    fmt.Sprintf(":%s", port),
 		Handler: app.routes(),
 	}
 
-	log.Println("Server is running on http://localhost:3333")
+	log.Printf("Listening on port %s", port)
 
 	return server.ListenAndServe()
 }
