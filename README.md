@@ -42,6 +42,9 @@ sudo apt-get install build-essential
 
 # Compile
 env GOOS=linux CGO_ENABLED=1 go build -o landApp ./cmd/api
+
+# For MacOs
+env GOOS=darwin GOARCH=amd64 go build -o landAppMac ./cmd/api/*
 ```
 
 ## Supervisor Conf
