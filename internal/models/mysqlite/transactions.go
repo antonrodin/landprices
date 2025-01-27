@@ -28,7 +28,7 @@ func (m *TransactionModel) Get(id string) (models.Transaction, error) {
 }
 
 func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error) {
-	sql := `SELECT id, price, date, old_or_new, postcode, locality, town_city, county, street, primary_address, secondary_address
+	sql := `SELECT id, price, date, old_or_new, Property_Type, PPDCategory_Type, Duration, Record_Status_monthly_file_only, postcode, locality, town_city, county, street, primary_address, secondary_address
 			FROM transactions
 			WHERE postcode = ?
 			LIMIT 200`
@@ -42,7 +42,22 @@ func (m *TransactionModel) Search(postcode string) ([]models.Transaction, error)
 
 	for rows.Next() {
 		tr := models.Transaction{}
-		err := rows.Scan(&tr.Id, &tr.Price, &tr.Date, &tr.OldOrNew, &tr.Postcode, &tr.Locality, &tr.TownCity, &tr.County, &tr.Street, &tr.PrimaryAddress, &tr.SecondaryAddress)
+		err := rows.Scan(
+			&tr.Id,
+			&tr.Price,
+			&tr.Date,
+			&tr.OldOrNew,
+			&tr.PropertyType,
+			&tr.CategoryType,
+			&tr.Duration,
+			&tr.RfMonthlyFile,
+			&tr.Postcode,
+			&tr.Locality,
+			&tr.TownCity,
+			&tr.County,
+			&tr.Street,
+			&tr.PrimaryAddress,
+			&tr.SecondaryAddress)
 		if err != nil {
 			return nil, err
 		}

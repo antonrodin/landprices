@@ -33,3 +33,62 @@ sqlite> .import ./202304.csv transactions
 ## I have uploaded the DB to my bucket
 
 https://s3.amazonaws.com/azr-es/prices.db
+
+## Compile binary with CGO enabled
+
+```
+# CGO_ENABLED if not works
+sudo apt-get install build-essential
+
+# Compile
+env GOOS=linux CGO_ENABLED=1 go build -o landApp ./cmd/api
+```
+
+## Supervisor Conf
+
+````
+cd /etc/supervisor/conf.d/
+
+# Create supervisor file
+sudo vim landtitles.conf
+````
+
+````
+anton@gosha:/etc/supervisor/conf.d$ cat landtitles.conf
+[program:landtitles]
+command=/home/anton/www/landprices/landApp
+directory=/home/anton/www/landprices
+autorestart=true
+autostart=true
+stdout_logfile=/home/anton/www/landprices/supervisor.log
+````
+
+Then
+
+````
+sudo supervisorctl
+> status
+> update
+> status
+````
+
+## Nginx Configuration
+
+````
+server {
+        listen 80;
+
+        server_name landtitles.azr.es;
+
+        location / {
+                proxy_pass http://localhost:3334;
+        }
+}
+````
+
+## Fields explanations from here
+
+- primaryAddress TEXT: Typically the house number or name.
+- secondaryAddress TEXT: Additional information if the building is divided into flats or sub-buildings.
+- propertyType TEXT: D, T, S, A <- no idea.
+- categoryType TEXT: F ? FreeHoland and LeaseHold???

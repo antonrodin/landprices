@@ -12,4 +12,8 @@ type Transaction struct {
 	PrimaryAddress   string `json:"primaryAddress"`
 	SecondaryAddress string `json:"secondaryAddress,omitempty"`
 	OldOrNew         string `json:"oldOrNew"`
+	CategoryType     string `json:"categoryType"`
+	PropertyType     string `json:"propertyType"`
+	Duration         string `json:"duration"`
+	RfMonthlyFile    string `json:"rfMonthlyFile"`
 }
